@@ -1,0 +1,13 @@
+name: "kubelinter"
+version: "0.1.0"
+usage: "Validate Charts using KubeLinter"
+description: |-
+  Validate Charts using KubeLinter
+command: "$HELM_PLUGIN_DIR/bin/helm-kubelinter"
+# downloaders:
+# - command: "scripts/pull.sh"
+#   protocols:
+#   - "gs"
+hooks:
+  install: "cd $HELM_PLUGIN_DIR; ./scripts/install.sh"
+  update: "cd $HELM_PLUGIN_DIR; ./scripts/install.sh"
