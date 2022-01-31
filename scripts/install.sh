@@ -1,7 +1,14 @@
 #!/bin/sh
 
-cd $HELM_PLUGIN_DIR
-version="$(cat plugin.yaml | grep "version" | cut -d '"' -f 2)"
+set -ex
+
+if [ -n "${HELM_PUSH_PLUGIN_NO_INSTALL_HOOK}" ]; then
+    echo "Development mode: not downloading versioned release."
+    exit 0
+fi
+
+cd "$HELM_PLUGIN_DIR" || exit 1
+version="$(grep "version" plugin.yaml | cut -d '"' -f 2)"
 echo "Installing helm-kubelinter ${version} ..."
 
 # Find correct archive name
@@ -15,7 +22,7 @@ case "${unameOut}" in
     *)                  os="UNKNOWN:${unameOut}"
 esac
 
-arch=`uname -m`
+arch=$(uname -m)
 
 if echo "$os" | grep -qe '.*UNKNOWN.*'
 then
@@ -24,27 +31,26 @@ then
 fi
 
 url="https://github.com/rm3l/helm-kubelinter/releases/download/${version}/helm-kubelinter_${version}_${os}_${arch}.tar.gz"
-
-filename=`echo ${url} | sed -e "s/^.*\///g"`
+filename=$(echo "${url}" | sed -e "s/^.*\///g")
 
 # Download archive
 if [ -n "$(command -v curl)" ]
 then
-    curl -sSL -O $url
+    curl -sSL -O "$url"
 elif [ -n "$(command -v wget)" ]
 then
-    wget -q $url
+    wget -q "$url"
 else
     echo "Need curl or wget"
-    exit -1
+    exit 1
 fi
 
 # Install bin
-rm -rf bin && mkdir bin && tar xvf $filename -C bin > /dev/null && rm -f $filename
+mkdir -p bin
+tar xvf "$filename" -C bin > /dev/null && rm -f "$filename"
 
-echo "helm-kubelinter ${version} is correctly installed."
+echo "helm-kubelinter ${version} has been installed correctly."
 echo
-
 echo "Lint a Helm Chart:"
-echo "  helm kubelinter lint /path/to/my/Chart [--format {sarif,plain,json}] [--values /path/to/my/values.yaml]"
+echo "  helm kubelinter lint <my_chart> [--format {sarif,plain,json}] [--values /path/to/my/values.yaml]"
 echo
