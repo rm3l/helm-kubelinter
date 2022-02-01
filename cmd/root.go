@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/rm3l/helm-kubelinter/pkg/chart"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -18,9 +20,23 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "helm-kubelinter",
+	Use:   filepath.Base(os.Args[0]),
 	Short: "Validate Helm Charts using KubeLinter",
-	Long:  `Helm Plugin to validate Charts using KubeLinter`,
+	Long: `This renders your charts locally and checks the resulting output using KubeLinter.
+	The difference with calling KubeLinter directly is that it is possible to pass 
+any valid options to Helm first (like dedicated values.yaml files) to represent a specific deployment context
+that needs to be checked.
+`,
+	Args: cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		chartRenderedLocally, closerFunc, err := chart.RenderLocally(args)
+		if err != nil {
+			panic(err)
+		}
+		defer closerFunc(chartRenderedLocally)
+		fmt.Println("chart rendered locally", chartRenderedLocally.Name())
+		//TODO
+	},
 }
 
 // Execute executes the CLI
