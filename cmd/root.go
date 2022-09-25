@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/rm3l/helm-kubelinter/pkg/chart"
+	"github.com/rm3l/helm-kubelinter/pkg/lint"
 	"os"
 	"path/filepath"
 
@@ -35,7 +36,10 @@ that needs to be checked.
 		}
 		defer closerFunc(chartRenderedLocally)
 		fmt.Println("chart rendered locally", chartRenderedLocally.Name())
-		//TODO
+
+		if err := lint.Lint(cmd, chartRenderedLocally, args); err != nil {
+			panic(err)
+		}
 	},
 }
 
@@ -61,4 +65,5 @@ func init() {
 		"kube-linter-include", "", "Include is a list of check names to include. If a check is in both Include and Exclude, Exclude wins.")
 	rootCmd.PersistentFlags().BoolVar(&kubeLinterVerbose, "kube-linter-verbose", false,
 		"Enable verbose logging")
+	rootCmd.AddCommand()
 }
