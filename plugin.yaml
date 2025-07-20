@@ -1,10 +1,14 @@
 name: "kubelinter"
 version: "0.1.0"
-usage: "helm kubelinter <my_chart> [any other Helm options]"
+usage: "helm kubelinter <my_chart> [any other Helm options] -- [any kube-linter options]"
 description: |-
-  Validate Charts using KubeLinter
-ignoreFlags: true
-command: "$HELM_PLUGIN_DIR/bin/helm-kubelinter"
-hooks:
-  install: "cd $HELM_PLUGIN_DIR; ./scripts/install.sh"
-  update: "cd $HELM_PLUGIN_DIR; ./scripts/install.sh"
+  Validate Charts using KubeLinter - https://github.com/stackrox/kube-linter.
+  Installs KubeLinter and runs it against the rendered output of a Helm chart (supports helm and kube-linter flags).
+ignoreFlags: false
+platformCommand:
+  - command: $HELM_PLUGIN_DIR/scripts/kubelinter.sh
+platformHooks:
+  install:
+    - command: ${HELM_PLUGIN_DIR}/scripts/install.sh
+  update:
+    - command: ${HELM_PLUGIN_DIR}/scripts/update.sh
