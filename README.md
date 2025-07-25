@@ -1,6 +1,6 @@
 # helm-kubelinter
 
-[![Build Status](https://github.com/rm3l/helm-kubelinter/workflows/release/badge.svg)](https://github.com/rm3l/helm-kubelinter/releases/latest)
+[![Release](https://github.com/rm3l/helm-kubelinter/actions/workflows/release.yaml/badge.svg)](https://github.com/rm3l/helm-kubelinter/actions/workflows/release.yaml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A Helm plugin that validates your Helm charts using [KubeLinter](https://github.com/stackrox/kube-linter), a static analysis tool that checks Kubernetes YAML files and Helm charts to ensure they follow best practices.
